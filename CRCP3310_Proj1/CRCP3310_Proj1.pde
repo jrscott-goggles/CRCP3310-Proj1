@@ -10,7 +10,7 @@ final int STATE_GRAPH = 1;
 
 final String FILE_NAME = "pg11.txt";
 final int ASCII_OFFSET = 97;
-final int NUM_LETTERS
+final int NUM_LETTERS = 26;
 
 int[] freqs = new int[NUM_LETTERS];
 int notLetterFreq = 0;
@@ -76,18 +76,18 @@ void prepColors() {
 }
 
 void prepImage() {
-  letterViz = createImage(420, 420);
+  letterViz = createImage(420, 420, RGB);
   letterViz.loadPixels();
   reader = createReader(FILE_NAME);
   try {
     int c;
     int pixel = 0;
     while ((c = reader.read()) != -1 && pixel < (letterViz.height * letterViz.width)) {
-      if ((Character.isAlphabetic(c)) {
+      if (Character.isAlphabetic(c)) {
         char letter = (char)Character.toLowerCase(c);
-        letterViz.pixels[i] = colors[letter - ASCII_OFFSET];
+        letterViz.pixels[pixel] = colors[letter - ASCII_OFFSET];
       } else {
-        letterViz.pixels[i] = color(0);
+        letterViz.pixels[pixel] = color(0);
       }
       pixel++;
     }
