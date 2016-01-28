@@ -8,15 +8,21 @@ int state;
 final int STATE_LETTERS = 0;
 final int STATE_GRAPH = 1;
 
-int[] freqs = new int[26];
-int notLetterFreq = 0;
+final String FILE_NAME = "pg11.txt";
 final int ASCII_OFFSET = 97;
+final int NUM_LETTERS
+
+int[] freqs = new int[NUM_LETTERS];
+int notLetterFreq = 0;
+PImage letterViz;
+color[] colors = new color[NUM_LETTERS];
 
 void setup() {
-  size(410, 410);
-  //reader = createReader("pg11.txt");
+  size(420, 420);
   state = STATE_LETTERS;
   prepFreq();
+  prepColors();
+  prepImage();
 }
 
 void draw() {
@@ -32,21 +38,8 @@ void mousePressed() {
   state = (state + 1) % 2;
 }
 
-char readChar() {
-  /*try {
-    return (char)reader.read();
-  } 
-  catch (IOException e) {
-    e.printStackTrace();
-    println("failed");
-    return '0';
-  }
-  */
-  return '0';
-}
-
 void drawLetterViz() {
-  background(255);
+  image(letterViz, 0, 0);
 }
 
 void drawFreqGraph() {
@@ -54,20 +47,53 @@ void drawFreqGraph() {
 }
 
 void prepFreq() {
-  for (int i = 0; i < 26; ++i) {
+  for (int i = 0; i < NUM_LETTERS; ++i) {
     freqs[i] = 0;
   }
-  reader = createReader("pg11.txt");
+  reader = createReader(FILE_NAME);
   try {
     int c;
     while ((c = reader.read()) != -1) {
-      if (!Character.isAlphabetic(c)) continue;
-      char letter = (char)Character.toLowerCase(c);
-      freqs[letter - ASCII_OFFSET]++;
+      if (Character.isAlphabetic(c)) {
+        char letter = (char)Character.toLowerCase(c);
+        freqs[letter - ASCII_OFFSET]++;
+      } else {
+       notLetterFreq++;
+      }
     }
   } catch (IOException e) {
     println("Could not read data");
     e.printStackTrace();
   }
   println(freqs);
+  println("Not letters: " + notLetterFreq);
+}
+
+void prepColors() {
+  for (int i = 0; i < NUM_LETTERS; ++i) {
+    colors[i] = color(random(255), random(255), random(255));
+  }
+}
+
+void prepImage() {
+  letterViz = createImage(420, 420);
+  letterViz.loadPixels();
+  reader = createReader(FILE_NAME);
+  try {
+    int c;
+    int pixel = 0;
+    while ((c = reader.read()) != -1 && pixel < (letterViz.height * letterViz.width)) {
+      if ((Character.isAlphabetic(c)) {
+        char letter = (char)Character.toLowerCase(c);
+        letterViz.pixels[i] = colors[letter - ASCII_OFFSET];
+      } else {
+        letterViz.pixels[i] = color(0);
+      }
+      pixel++;
+    }
+    letterViz.updatePixels();
+  } catch (IOException e) {
+    println("Could not read data");
+    e.printStackTrace();
+  }
 }
