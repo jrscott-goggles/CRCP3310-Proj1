@@ -12,18 +12,13 @@ final String FILE_NAME = "pg11.txt";
 final int ASCII_OFFSET = 97;
 final int NUM_LETTERS = 26;
 
-int[] freqs = new int[NUM_LETTERS];
-int notLetterFreq = 0;
-String keyword = "alice";
-int keywordFreq = 0;
-IntList keywordOccurances = new IntList();
-
-PImage letterViz;
-color[] colors = new color[NUM_LETTERS];
-PImage keywordOverlay;
+boolean changingKeyword = false;
 
 void setup() {
-  size(420, 420);
+  size(385, 385);
+  noStroke();
+  textSize(12);
+  textAlign(LEFT, TOP);
   state = STATE_LETTERS;
   prepFreq();
   prepColors();
@@ -44,98 +39,29 @@ void mousePressed() {
   state = (state + 1) % 2;
 }
 
-void drawLetterViz() {
-  image(letterViz, 0, 0);
-  image(keywordOverlay, 0, 0);
-}
-
-void drawFreqGraph() {
-  background(0);
-}
-
-void prepFreq() {
-  for (int i = 0; i < NUM_LETTERS; ++i) {
-    freqs[i] = 0;
-  }
-  reader = createReader(FILE_NAME);
-  int place = 0;
-  
-  char[] keyChars = keyword.toCharArray();
-  for (int i = 0; i < keyChars.length; ++i) {
-    keyChars[i] = Character.toLowerCase(keyChars[i]);
-  }
-  int keywordPlace = 0;
-  
-  try {
-    int c;
-    while ((c = reader.read()) != -1) {
-      if (Character.isAlphabetic(c)) {
-        char letter = (char)Character.toLowerCase(c);
-        freqs[letter - ASCII_OFFSET]++;
-        
-        //Find keyword
-        if (letter == keyChars[keywordPlace]) {
-          if (keywordPlace == (keyChars.length - 1)) {
-            keywordFreq++;
-            keywordPlace = 0;
-            keywordOccurances.append(place - (keyChars.length - 1));
-          } else {
-          keywordPlace++;
-         }
+void keyPressed() {
+  if (state == STATE_GRAPH) {
+    if (key == ENTER) {
+      changingKeyword = !changingKeyword;
+      if (!changingKeyword) {
+        refindKeywordFreq();
+        prepKeywordOverlay();
+      }
+    } else if (changingKeyword) {
+      if (Character.isAlphabetic(key)) {
+        char letter = (char)Character.toLowerCase(key);
+        if (keyword == "_") {
+          keyword = "" + key;
         } else {
-          keywordPlace = 0;
+          keyword += letter;
         }
-      } else {
-       notLetterFreq++;
-      }
-      place++;
-    }
-  } catch (IOException e) {
-    println("Could not read data");
-    e.printStackTrace();
-  }
-  println(freqs);
-  println("Not letters: " + notLetterFreq);
-  println("Keyword: " + keywordFreq);
-}
-
-void prepColors() {
-  for (int i = 0; i < NUM_LETTERS; ++i) {
-    colors[i] = color(0);
-  }
-}
-
-void prepImage() {
-  letterViz = createImage(420, 420, RGB);
-  letterViz.loadPixels();
-  reader = createReader(FILE_NAME);
-  try {
-    int c;
-    int pixel = 0;
-    while ((c = reader.read()) != -1 && pixel < (letterViz.height * letterViz.width)) {
-      if (Character.isAlphabetic(c)) {
-        char letter = (char)Character.toLowerCase(c);
-        letterViz.pixels[pixel] = colors[letter - ASCII_OFFSET];
-      } else {
-        letterViz.pixels[pixel] = color(random(255), random(255), random(255));
-      }
-      pixel++;
-    }
-    
-  } catch (IOException e) {
-    println("Could not read data");
-    e.printStackTrace();
-  }
-}
-
-void prepKeywordOverlay() {
-    keywordOverlay = createImage(420, 420, ARGB);
-    keywordOverlay.loadPixels();
-    int[] keywordHeres = keywordOccurances.array();
-    for (int i = 0; i < keywordHeres.length; ++i) {
-      for (int j = 0; j < keyword.length(); ++j) {
-        letterViz.pixels[keywordHeres[i] + j] = color(255);
+      } else if (keyCode == BACKSPACE) {
+        if (keyword.length() == 1) {
+          keyword = "_";
+        } else {
+          keyword = keyword.substring(0, keyword.length() - 1);
+        }
       }
     }
-    keywordOverlay.updatePixels();
+  }
 }
