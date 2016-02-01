@@ -40,7 +40,10 @@ void mousePressed() {
 }
 
 void keyPressed() {
-  if (state == STATE_GRAPH) {
+   if (key == 'r' || key == 'R' && !changingKeyword) {
+      prepColors();
+      prepImage();
+   } else if (state == STATE_GRAPH) {
     if (key == ENTER) {
       changingKeyword = !changingKeyword;
       if (!changingKeyword) {

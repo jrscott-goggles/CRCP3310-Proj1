@@ -24,10 +24,11 @@ void drawFreqGraph() {
       popMatrix();
   }
   fill(0);
-  text("Most frequent letter: " + mostFreq + " with " + freqs[(int)mostFreq - ASCII_OFFSET], 14, 320);
+  text("Most frequent letter: " + mostFreq + " with " + freqs[(int)mostFreq - ASCII_OFFSET], 14, 280);
   text("Least frequent letter: " + leastFreq + " with " + freqs[(int)leastFreq - ASCII_OFFSET], 14, 300);
-  text("Keyword: \"" +keyword + "\" appears " + keywordFreq, 14, 340);
-  text("Press ENTER to edit keyword.  Press again to initialize change.", 14, 360);
+  text("Keyword: \"" +keyword + "\" appears " + keywordFreq, 14, 320);
+  text("Press ENTER to edit keyword.  Press again to initialize change.", 14, 340);
+  text("Press R to change color palette.", 14, 360);
 }
 
 void prepColors() {
